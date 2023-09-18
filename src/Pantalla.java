@@ -1,21 +1,23 @@
+
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import javax.swing.ImageIcon;
 
 public class Pantalla extends javax.swing.JFrame {
-    
+
     SeleccionPerks perk;
     BaseDeDatos perksLista;
     ArrayList<String> tempLista;
-    
+
     public Pantalla() {
         initComponents();
         setIconImage(new ImageIcon(getClass().getResource("/Imagenes/perks.png")).getImage());
         perksLista = new BaseDeDatos();
         perk = new SeleccionPerks(perksLista.cargaDatos());
-        tempLista = new ArrayList<>();
+        //tempLista = new ArrayList<>();
     }
-    
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -56,7 +58,7 @@ public class Pantalla extends javax.swing.JFrame {
         jButton1.setText("Aleatorio");
         jButton1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(196, 189, 241), 1, true));
         jButton1.setContentAreaFilled(false);
-        jButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jButton1.setFocusPainted(false);
         jButton1.setOpaque(true);
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -71,7 +73,7 @@ public class Pantalla extends javax.swing.JFrame {
         jButton2.setText("Guardar");
         jButton2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(196, 189, 241), 1, true));
         jButton2.setContentAreaFilled(false);
-        jButton2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jButton2.setFocusPainted(false);
         jButton2.setOpaque(true);
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -86,7 +88,7 @@ public class Pantalla extends javax.swing.JFrame {
         jButton3.setText("Borrar");
         jButton3.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(196, 189, 241), 1, true));
         jButton3.setContentAreaFilled(false);
-        jButton3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton3.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jButton3.setFocusPainted(false);
         jButton3.setOpaque(true);
         jButton3.addActionListener(new java.awt.event.ActionListener() {
@@ -203,59 +205,79 @@ public class Pantalla extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        if (perk.getPerks().isEmpty()){
+        if (perk.getPerks().isEmpty()) {
             jlbMostrar.setText("No hay Perks registradas.");
-        }else if (perk.getPerks().size() < 4){
-            jlbMostrar.setText("No hay suficientes perks.");
-        }else{
-            int contador = 4;
-            String lineas;
-            String lineaPerk = "";
-            while (contador > 0){
-                lineas = perk.seleccion();
-                if (!tempLista.contains(lineas)){
-                    tempLista.add(lineas);
-                    contador -= 1;
-                }
-            }
-            for (String pasiva : tempLista) {
-                lineaPerk += "  " + pasiva;
-            }
-            jlbMostrar.setText(lineaPerk);
-            tempLista.clear();
+            return;
         }
+        if (perk.getPerks().size() < 4) {
+            jlbMostrar.setText("No hay suficientes perks.");
+            return;
+        }
+        
+        jlbMostrar.setText("");
+        LinkedHashSet<String> set = new LinkedHashSet<>();//un list que no admite duplicados y mantiene el orden de inserción
+        while(set.size()<4){
+            set.add(perk.seleccion());
+        }
+        
+        set.forEach((s)->jlbMostrar.setText(jlbMostrar.getText()+ "  " + s));
+        
+        //este for es equivalente a la linea de arriba
+        /*for (String pasiva : set) {
+            jlbMostrar.setText(jlbMostrar.getText()+ "  " + pasiva);
+        }*/
+        
+        
+        /*int contador = 4;
+        String lineas;
+        String lineaPerk = "";
+        while (contador > 0) {
+            lineas = perk.seleccion();
+            System.out.println("LINEAS: "+lineas);
+            if (!tempLista.contains(lineas)) {
+                tempLista.add(lineas);
+                contador -= 1;
+            }
+        }
+        for (String pasiva : tempLista) {
+            System.out.println("PASIVA: "+pasiva);
+            lineaPerk += "  " + pasiva;
+        }
+        jlbMostrar.setText(lineaPerk);
+        tempLista.clear();*/
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        if (jtaGuardar.getText().isBlank()){
-            
-        }else{
-            if (perk.getPerks().contains(perksLista.capitalize(jtaGuardar.getText()))){
-                jlbMostrar.setText("La Perk ya se encuentra registrada.");
-                jtaGuardar.setText("");
-            }else{
-                perk.getPerks().add(perksLista.capitalize(jtaGuardar.getText()));
-                perksLista.agregarPerk(perksLista.capitalize(jtaGuardar.getText()));
-                jtaGuardar.setText("");
-                jlbMostrar.setText("Se ha guardado correctamente.");
-            }
+        if (jtaGuardar.getText().isBlank()) {
+            return;
         }
+        if (perk.getPerks().contains(perksLista.capitalize(jtaGuardar.getText()))) {
+            jlbMostrar.setText("La Perk ya se encuentra registrada.");
+            jtaGuardar.setText("");
+        } else {
+            perk.getPerks().add(perksLista.capitalize(jtaGuardar.getText()));
+            perksLista.agregarPerk(perksLista.capitalize(jtaGuardar.getText()));
+            jtaGuardar.setText("");
+            jlbMostrar.setText("Se ha guardado correctamente.");
+        }
+
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        if (jtaBorrar.getText().isBlank()){
-            
-        }else{
-            if (perk.getPerks().contains(perksLista.capitalize(jtaBorrar.getText()))){
-                perk.getPerks().remove(perksLista.capitalize(jtaBorrar.getText()));
-                perksLista.eliminar(perk);
-                jlbMostrar.setText("Se ha eliminado correctamente.");
-                jtaBorrar.setText("");
-            }else{
-                jlbMostrar.setText("No se encontró la Perk.");
-                jtaBorrar.setText("");
-            }
+        if (jtaBorrar.getText().isBlank()) {
+            return;
         }
+        if (perk.getPerks().contains(perksLista.capitalize(jtaBorrar.getText()))) {
+            perk.getPerks().remove(perksLista.capitalize(jtaBorrar.getText()));
+            perksLista.eliminar(perk);
+            jlbMostrar.setText("Se ha eliminado correctamente.");
+            jtaBorrar.setText("");
+        } else {
+            jlbMostrar.setText("No se encontró la Perk.");
+            jtaBorrar.setText("");
+        }
+
     }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
@@ -286,10 +308,8 @@ public class Pantalla extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Pantalla().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new Pantalla().setVisible(true);
         });
     }
 
