@@ -1,6 +1,4 @@
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import javax.swing.ImageIcon;
 
@@ -8,7 +6,6 @@ public class Pantalla extends javax.swing.JFrame {
 
     SeleccionPerks perk;
     BaseDeDatos perksLista;
-    ArrayList<String> tempLista;
 
     public Pantalla() {
         initComponents();
